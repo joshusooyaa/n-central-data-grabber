@@ -61,5 +61,19 @@
     "max-log-size": 10,
     "backup-count": 5
   },
+  "microsoft-graph": {
+    "client-id": "",
+    "client-secret": "",
+    "tenant-id": "",
+    "email-details": {
+      "sender": "",
+      "subject": "",
+      "body": ""
+    }
+  },
+  "monitor": {
+    "max-retries": 5,
+    "wait-time": 60
+  }
   "script-interval": 300
 }
