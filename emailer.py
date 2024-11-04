@@ -7,17 +7,15 @@ class Emailer:
   def __init__(self, config, logger):
     self.client_id = config['microsoft-graph']['client-id']
     self.client_secret = config['microsoft-graph']['client-secret']
-    self.tenant_id = config['microsoft-graph']['tenant_id']
+    self.tenant_id = config['microsoft-graph']['tenant-id']
     self.token_url = 'https://login.microsoftonline.com/{0}/oauth2/v2.0/token'.format(self.tenant_id)
     self.scope = 'https://graph.microsoft.com/.default'
     self.access_token = None
     self.token_expiration = 0
 
-    self.sender = config['email-details']['sender']
-    self.subject = config['email-details']['subject']
-    self.message = config['email-details']['body']
+    self.sender = config['microsoft-graph']['email-details']['sender']
     self.logger = logger
-  
+
   def _get_access_token(self):
     if self.access_token is None or time.time() > self.token_expiration:
       payload = {
@@ -35,16 +33,16 @@ class Emailer:
       else:
         self.logger.error('Could not obtain access token: {0}'.format(response.text))
         return False
-  
+
     return self.access_token
-  
-  def _fetch_message(self, recipients, files):
+
+  def _fetch_message(self, recipients, message, files):
     email = {
       'message': {
         'subject': self.subject,
         'body': {
           'contentType': 'Text',
-          'content': self.message
+          'content': message
         },
         'toRecipients': [
           {'emailAddress': {'address': recipient}} for recipient in recipients
@@ -59,7 +57,7 @@ class Emailer:
 
     self.logger.info('Email configured')
     return email
-  
+
   def _configure_files(self, files):
     attachments = []
     for file in files:
