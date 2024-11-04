@@ -1,0 +1,4 @@
+config.json
+logs/log_files/
+__pycache__/
+venv/

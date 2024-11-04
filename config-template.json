@@ -1,0 +1,65 @@
+{
+  "API": {
+    "api-jwt": "",
+    "api-token-refresh-offset": 10,
+    "api-endpoints":{
+      "base-url": "",
+      "auth": {
+        "authenticate-endpoint": "auth/authenticate",
+        "refresh-endpoint": "auth/refresh"
+      },
+      "devices": {
+        "endpoint": "devices/",
+        "device-services": "service-monitor-status",
+        "params": {
+          "pageSize": "pageSize=-1"
+        },
+        "device-filter": {
+          "info": [["deviceId", "device_id"], ["longName", "device_name"], ["deviceClass", "device_class"], ["customerName", "org_name"], ["model", "model"], ["manufacturer", "manufacturer"]]
+        },
+        "time-format": "%Y-%m-%d %H:%M:%S.%f %z"
+      },
+      "tasks": {
+        "endpoint": "appliance-tasks/",
+        "task-filter": {
+          "info": ["taskId", "stateStatus", "moduleName", "taskIdent", "lastScanTime"]
+        },
+        "data-filter": {
+          "data-row-name": "detailName",
+          "info": [["scanDetailId", "data_id"], ["description", "description"], ["detailValue", "value"], ["state", "state"], ["diskName", "diskName"]],
+          "module-names": ["CPU", "Memory", "Disk"],
+          "unwanted-sub-modules": ["process"],
+          "wanted-sub-modules": ["usage", "disk_total", "disk_free"]
+        }
+      }
+    }
+  },
+  "DB": {
+    "db-tables": {
+      "orgs": "orgs",
+      "devices": "devices",
+      "data-info": "data_info",
+      "raw-data": "raw_data"
+    },
+    "db-columns": {
+      "orgs": ["org_id", "org_name"],
+      "devices": ["device_id"],
+      "data-info": ["data_id", "field_name", "description"],
+      "raw-data": ["value", "state", "scan_time", "device_id", "data_id"]
+    },
+    "host": {
+      "ip": "",
+      "user": "",
+      "password": "",
+      "database": ""
+    }
+  },
+  "org-abbreviations": {
+    "Org Name": "abbreviation"
+  },
+  "logging": {
+    "max-log-size": 10,
+    "backup-count": 5
+  },
+  "script-interval": 300
+}
