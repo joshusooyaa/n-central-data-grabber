@@ -63,9 +63,10 @@ Take `config-template.json` and rename it to `config.json`. Below is the config 
 - **`data-filter`**:  This is what is used to extract values from the response returned from `endpoint` called with a task id.
   - **🔒`data-row-name`**:  The key in the api response to retrieve the raw data name.
   - **🔒`info`**:  A list of lists. Index 0 of the lists contains the api response key, and index 1 of the lists contains the user defined key they want to store it as. Index 1 of these lists *can* be changed to match column schema in your DB; however, it is recommended to keep these names as is since testing has not been done to ensure proper insertion with different column names. 
-  - **`module-names`**:  A list containing the services you want to fetch. Setting to empty will fetch all services. Note - the more services, the longer the script will run since an API call will be made for each service.
+  - **`module-names`**:  A list containing the services you want to fetch using an exact match. Setting to empty will fetch all services. Note - the more services, the longer the script will run since an API call will be made for each service.
   - **`unwanted-sub-modules`**:  A list containing the raw data points you do not want to fetch from a service. This uses the 'description' field returned from the api get request to filter out anything containing the word. Can be left empty.
   - **`wanted-sub-modules`**:  A list containing the specific raw data points you want to extract from a service. This checks against the 'description' and 'detailName' fields from the returned api response. Note that this is checked after filtering with `unwanted-sub-modules`. Can be empty.
+  - **`generic-modules`**: A list containing the services you want to fetch using a substring match. For example, if this was set to ["CPU"] and a service is named "CPU - Palo Alto" it will include it.
 
 ---
 

@@ -27,9 +27,10 @@
         "data-filter": {
           "data-row-name": "detailName",
           "info": [["scanDetailId", "data_id"], ["description", "description"], ["detailValue", "value"], ["state", "state"], ["diskName", "diskName"]],
-          "module-names": ["CPU", "Memory", "Disk"],
+          "module-names": ["CPU", "Memory", "Disk", "Connectivity"],
           "unwanted-sub-modules": ["process"],
-          "wanted-sub-modules": ["usage", "disk_total", "disk_free"]
+          "wanted-sub-modules": ["usage", "disk_total", "disk_free"],
+          "generic-modules": ["CPU", "Memory"]
         }
       }
     }

@@ -6,6 +6,7 @@ class TaskHandler:
     self.data_row_name = config['API']['api-endpoints']['tasks']['data-filter']['data-row-name']
     self.data_filter = config['API']['api-endpoints']['tasks']['data-filter']['info']
     self.modules = config['API']['api-endpoints']['tasks']['data-filter']['module-names']
+    self.generic_modules = config['API']['api-endpoints']['tasks']['data-filter']['generic-modules']
     self.unwanted_sub_modules = config['API']['api-endpoints']['tasks']['data-filter']['unwanted-sub-modules']
     self.wanted_sub_modules = config['API']['api-endpoints']['tasks']['data-filter']['wanted-sub-modules']
 
@@ -29,16 +30,25 @@ class TaskHandler:
     if data.get('scanTime'):
       self.raw_data['scanTime'] = data['scanTime']
 
+  def _is_task_to_get(self, task, task_name):
+    if len(self.modules) == 0 or task_name in self.modules:
+      return True
+    elif any(generic in task_name for generic in self.generic_modules):
+      return True
+    
+    return False
+
   def _get_raw_data(self):
     task_id_key = self.tasks_filter[0]
     module_name_key = self.tasks_filter[2]
     task_ident_key = self.tasks_filter[3]
+    task_name = task[module_name_key]
   
     for task in self.tasks:
-      if len(self.modules) == 0 or task[module_name_key] in self.modules:
+      if self._is_task_to_get(task, task_name):
         resp = self.api.get(self.endpoint + f'{task[task_id_key]}')
         if (resp):
-          if task[module_name_key] == 'Disk':
+          if task_name == 'Disk':
             resp = self._add_info(resp, task[task_ident_key], field='diskName')
 
           self._filter_raw_data(resp)
