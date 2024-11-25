@@ -42,9 +42,9 @@ class TaskHandler:
     task_id_key = self.tasks_filter[0]
     module_name_key = self.tasks_filter[2]
     task_ident_key = self.tasks_filter[3]
-    task_name = task[module_name_key]
   
     for task in self.tasks:
+      task_name = task[module_name_key]
       if self._is_task_to_get(task, task_name):
         resp = self.api.get(self.endpoint + f'{task[task_id_key]}')
         if (resp):
