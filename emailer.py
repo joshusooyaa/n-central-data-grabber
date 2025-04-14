@@ -49,7 +49,11 @@ class Emailer:
           'content': self.body
         },
         'toRecipients': [
-          self.recipient
+          {
+            "emailAddress": {
+              "address": self.recipient
+            }
+          }
         ]
       }
     }
