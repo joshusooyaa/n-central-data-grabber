@@ -30,7 +30,8 @@ class APIClient:
         'expiry': datetime.datetime.now() + datetime.timedelta(seconds=resp['tokens']['refresh']['expirySeconds']) - self.token_refresh_offset
       }
     else:
-      self.logger.error("Failed to build token. Make sure API token is valid.")
+      self.logger.error("Failed to build token. Make sure JWT token is valid and API user password is no older than 3 months.")
+      raise ValueError("Failed to build token. Make sure JWT token is valid and API user password is no older than 3 months.")
 
   def _refresh_token(self):
     if self._is_refresh_expired():
