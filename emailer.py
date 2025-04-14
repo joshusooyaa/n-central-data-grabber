@@ -58,7 +58,7 @@ class Emailer:
       2. If the password reset isn't the issue, you can attempt to restart the service manually:
           - pgrep -f 'main.py'
           - kill (id returned from above)
-          - sudo service datamonitor.service restart
+          - sudo service datamonitor restart
           - view logs in /opt/n-central-data-grabber/logs/log_files/* for details on if it's running properly
           - log.log will tell you immediately if the script is running properly or not, you can check by doing tail -f path-to-log.log to see the latest logs and if it's updating.
       3. All other issues are unknown as these are the only two that have been seen before.
