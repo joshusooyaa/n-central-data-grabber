@@ -1,5 +1,6 @@
 {
   "API": {
+    "expires": "",
     "api-jwt": "",
     "api-token-refresh-offset": 10,
     "api-endpoints":{
@@ -69,12 +70,14 @@
     "email-details": {
       "sender": "",
       "subject": "",
-      "body": ""
-    }
+      "body": "",
+      "recipient": ""
+    },
+    "expires": ""
   },
   "monitor": {
     "max-retries": 5,
     "wait-time": 60
-  }
+  },
   "script-interval": 300
 }

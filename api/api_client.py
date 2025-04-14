@@ -20,14 +20,18 @@ class APIClient:
   def _build_token(self):
     self.logger.info(f"Buiding token from scratch.")
     resp = self.post(self.auth_endpoint)
-    self.token = {
-      'token': resp['tokens']['access']['token'],
-      'expiry': datetime.datetime.now() + datetime.timedelta(seconds=resp['tokens']['access']['expirySeconds']) - self.token_refresh_offset
-    }
-    self.refresh = {
-      'token': resp['tokens']['refresh']['token'],
-      'expiry': datetime.datetime.now() + datetime.timedelta(seconds=resp['tokens']['refresh']['expirySeconds']) - self.token_refresh_offset
-    }
+    if resp and resp.get('tokens'):
+      self.token = {
+        'token': resp['tokens']['access']['token'],
+        'expiry': datetime.datetime.now() + datetime.timedelta(seconds=resp['tokens']['access']['expirySeconds']) - self.token_refresh_offset
+      }
+      self.refresh = {
+        'token': resp['tokens']['refresh']['token'],
+        'expiry': datetime.datetime.now() + datetime.timedelta(seconds=resp['tokens']['refresh']['expirySeconds']) - self.token_refresh_offset
+      }
+    else:
+      self.logger.error("Failed to build token. Make sure JWT token is valid and API user password is no older than 3 months.")
+      raise ValueError("Failed to build token. Make sure JWT token is valid and API user password is no older than 3 months.")
 
   def _refresh_token(self):
     if self._is_refresh_expired():
