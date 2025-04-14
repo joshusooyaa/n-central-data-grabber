@@ -88,7 +88,7 @@ def monitor():
     opened_expired_ticket, opened_graph_ticket, last_daily_check = check_api(logger, emailer, opened_expired_ticket, opened_graph_ticket, last_daily_check, ran_once)
     ran_once = 1
 
-    if not is_script_running(logger):
+    if not is_script_running():
       if retry_count < max_retires:
         logger.error("Data grabber is no longer running. Attemping to restart...")
 
