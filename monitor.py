@@ -45,10 +45,6 @@ def monitor():
   while True:
     if not is_script_running(logger):
       if retry_count < max_retires:
-        if not opened_ticket and sends < max_sends:
-          emailer.send()
-          sends += 1
-          opened_ticket = True
         logger.error("Data grabber is no longer running. Attemping to restart...")
         start_script(logger)
         retry_count += 1
