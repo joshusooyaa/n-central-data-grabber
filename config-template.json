@@ -69,9 +69,9 @@
     "email-details": {
       "sender": "",
       "subject": "",
-      "body": ""
-    },
-    "recipient": ""
+      "body": "",
+      "recipient": ""
+    }
   },
   "monitor": {
     "max-retries": 5,

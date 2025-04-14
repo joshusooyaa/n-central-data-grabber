@@ -16,6 +16,7 @@ class Emailer:
     self.sender = config['microsoft-graph']['email-details']['sender']
     self.subject = config['microsoft-graph']['email-details']['subject']
     self.body = config['microsoft-graph']['email-details']['body']
+    self.recipient = config['microsoft-graph']['email-details']['recipient']
     self.logger = logger
   
   def _get_access_token(self):
@@ -39,7 +40,7 @@ class Emailer:
     self.logger.info('Access token obtained')
     return self.access_token
 
-  def _fetch_message(self, recipients, files = None):
+  def _fetch_message(self, files = None):
     email = {
       'message': {
         'subject': self.subject,
@@ -48,7 +49,7 @@ class Emailer:
           'content': self.body
         },
         'toRecipients': [
-          {'emailAddress': {'address': recipient['email']}} for recipient in recipients
+          self.recipient
         ]
       }
     }
@@ -94,7 +95,7 @@ class Emailer:
     
     return attachment_list
   
-  def send(self, recipients, files=None):
+  def send(self, files=None):
     access_token = self._get_access_token()
     if (access_token):
       url = 'https://graph.microsoft.com/v1.0/users/{0}/sendMail'.format(self.sender)
@@ -102,7 +103,7 @@ class Emailer:
         'Authorization': 'Bearer {0}'.format(access_token),
         'Content-Type': 'application/json'
       }
-      email = self._fetch_message(recipients, files)
+      email = self._fetch_message(files)
 
       response = requests.post(url, headers=headers, json=email)
       if response.status_code == 202:
