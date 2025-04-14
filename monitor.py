@@ -92,15 +92,16 @@ def monitor():
       if retry_count < max_retires:
         logger.error("Data grabber is no longer running. Attemping to restart...")
 
-        if not opened_ticket:
-          emailer.send('fail')
-          opened_ticket = True
-
         start_script(logger)
         retry_count += 1
         time.sleep(15)
       else:
         logger.error(f"Max retires reached. Failed to restart script. Now sleeping for {wait_time} minutes before attempting again.")
+
+        if not opened_ticket:
+          emailer.send('fail')
+          opened_ticket = True
+        
         retry_count = 0
         time.sleep(wait_time * 60)
     else:

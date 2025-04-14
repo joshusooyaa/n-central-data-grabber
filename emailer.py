@@ -43,24 +43,24 @@ class Emailer:
   def _fetch_message(self, subject, files = None):
 
     if subject == 'api':
-      subject = "N-Central API Password Expiry"
+      subject = "N-Central Data Collector API Password Expiry"
       body = "The user nocnoticies@ipservices.com has a password expiry soon. Please update the password for this user to prevent the n-central data collection script from failing. Note: Do NOT update the API key. See OA 12916 for more details."
     elif subject == 'graph':
-      subject = "N-Central Microsoft-Graph Key Expiry"
+      subject = "N-Central Data Collector Microsoft-Graph Key Expiry"
       body = "The API keys for Microsoft-Graph are set to expire soon. When this expires, the n-central data collection script cannot create a ticket in TOPDesk if it's no longer running."
     elif subject == 'fail':
       subject = "N-Central Data Collector Failed"
       body = """
-      The script running in /opt/n-central-data-grabber (main.py) has failed to restart more than 5 times. This is located on 10.30.14.4 (ubuntu server).\n
+      The script running in /opt/n-central-data-grabber (main.py) has failed to restart more than 5 times. This is located on 10.30.14.4 (ubuntu server).
       \n
-      Steps to potentially resolve this:\n
-      1. Make sure the API user nocnoticies@ipservices.com for N-Central has had a password reset within the last quarter.\n
-      2. If the password reset isn't the issue, you can attempt to restart the service manually:\n
-          - pgrep -f 'main.py'\n
-          - kill (id returned from above)\n
-          - sudo service datamonitor.service restart\n
-          - view logs in /opt/n-central-data-grabber/logs/log_files/* for details on if it's running properly\n
-          - log.log will tell you immediately if the script is running properly or not, you can check by doing tail -f path-to-log.log to see the latest logs and if it's updating.\n
+      Steps to potentially resolve this:
+      1. Make sure the API user nocnoticies@ipservices.com for N-Central has had a password reset within the last quarter.
+      2. If the password reset isn't the issue, you can attempt to restart the service manually:
+          - pgrep -f 'main.py'
+          - kill (id returned from above)
+          - sudo service datamonitor.service restart
+          - view logs in /opt/n-central-data-grabber/logs/log_files/* for details on if it's running properly
+          - log.log will tell you immediately if the script is running properly or not, you can check by doing tail -f path-to-log.log to see the latest logs and if it's updating.
       3. All other issues are unknown as these are the only two that have been seen before.
       """
 
