@@ -33,10 +33,15 @@ def monitor():
   config = ConfigLoader()
   logger, _ = logger_setup()
   emailer = Emailer(config, logger)
+  opened_ticket = False
   max_retires = config['monitor']['max-retries']
   wait_time = config['monitor']['wait-time']
 
   retry_count = 0
+  
+  # Fallback just in case something goes wrong, prevent opening too many tickets
+  max_sends = 100 
+  sends = 0 
   while True:
     if not is_script_running(logger):
       if retry_count < max_retires:
@@ -48,7 +53,13 @@ def monitor():
         logger.error(f"Max retires reached. Failed to restart script. Now sleeping for {wait_time} minutes before attempting again.")
         retry_count = 0
         time.sleep(wait_time * 60)
+
+        if not opened_ticket and sends < max_sends:
+          emailer.send()
+          sends += 1
+          opened_ticket = True
     else:
+      opened_ticket = False
       retry_count = 0
 
     time.sleep(60)

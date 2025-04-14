@@ -14,8 +14,10 @@ class Emailer:
     self.token_expiration = 0
 
     self.sender = config['microsoft-graph']['email-details']['sender']
+    self.subject = config['microsoft-graph']['email-details']['subject']
+    self.body = config['microsoft-graph']['email-details']['body']
     self.logger = logger
-
+  
   def _get_access_token(self):
     if self.access_token is None or time.time() > self.token_expiration:
       payload = {
@@ -29,35 +31,37 @@ class Emailer:
       if response.status_code == 200:
         token_info = response.json()
         self.access_token = token_info['access_token']
-        self.token_expiration = time.time() + token_info['expires_in']
+        self.token_expiration = time.time() + token_info['expires_in'] - 300
       else:
         self.logger.error('Could not obtain access token: {0}'.format(response.text))
         return False
 
+    self.logger.info('Access token obtained')
     return self.access_token
 
-  def _fetch_message(self, recipients, message, files):
+  def _fetch_message(self, recipients, files = None):
     email = {
       'message': {
         'subject': self.subject,
         'body': {
           'contentType': 'Text',
-          'content': message
+          'content': self.body
         },
         'toRecipients': [
-          {'emailAddress': {'address': recipient}} for recipient in recipients
+          {'emailAddress': {'address': recipient['email']}} for recipient in recipients
         ]
       }
     }
 
-    if files:
-      attachments = self._configure_files(files)
-      attachment_list = self._fetch_attachments(attachments)
-      email['message']['attachments'] = attachment_list
+    #if files:
+      #attachments = self._configure_files(files)
+      #attachment_list = self._fetch_attachments(attachments)
+      #if len(attachment_list) >= 1:
+      #  email['message']['attachments'] = attachment_list
 
     self.logger.info('Email configured')
     return email
-
+  
   def _configure_files(self, files):
     attachments = []
     for file in files:

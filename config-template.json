@@ -70,11 +70,12 @@
       "sender": "",
       "subject": "",
       "body": ""
-    }
+    },
+    "recipient": ""
   },
   "monitor": {
     "max-retries": 5,
     "wait-time": 60
-  }
+  },
   "script-interval": 300
 }
