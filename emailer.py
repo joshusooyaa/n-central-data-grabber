@@ -42,13 +42,13 @@ class Emailer:
 
   def _fetch_message(self, subject, files = None):
 
-    if subject is 'api':
+    if subject == 'api':
       subject = "N-Central API Password Expiry"
       body = "The user nocnoticies@ipservices.com has a password expiry soon. Please update the password for this user to prevent the n-central data collection script from failing. Note: Do NOT update the API key. See OA 12916 for more details."
-    elif subject is 'graph':
+    elif subject == 'graph':
       subject = "N-Central Microsoft-Graph Key Expiry"
       body = "The API keys for Microsoft-Graph are set to expire soon. When this expires, the n-central data collection script cannot create a ticket in TOPDesk if it's no longer running."
-    elif subject is 'fail':
+    elif subject == 'fail':
       subject = "N-Central Data Collector Failed"
       body = """
       The script running in /opt/n-central-data-grabber (main.py) has failed to restart more than 5 times. This is located on 10.30.14.4 (ubuntu server).\n

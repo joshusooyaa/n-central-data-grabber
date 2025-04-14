@@ -10,11 +10,9 @@ from datetime import datetime, timedelta
 SCRIPT_PATH = "main.py"
 ERROR_LOG_PATH = "logs/log_files/error.log"
 
-ran_once = 0 # Run daily check on first run, then begin daily checks after
-
-def check_api(logger, emailer, opened_expired_ticket, opened_graph_ticket, last_daily_check):
+def check_api(logger, emailer, opened_expired_ticket, opened_graph_ticket, last_daily_check, ran_once):
   now = datetime.now()
-  if (now - last_daily_check >= timedelta(days=1)) or (ran_once is 0):
+  if (now - last_daily_check >= timedelta(days=1)) or (ran_once == 0):
     ran_once = 1
 
     logger.info(f"Checking API and Graph expiry for: {now}")
@@ -84,9 +82,11 @@ def monitor():
   wait_time = config['monitor']['wait-time']
 
   retry_count = 0
+  ran_once = 0
 
   while True:
-    opened_expired_ticket, opened_graph_ticket, last_daily_check = check_api(logger, emailer, opened_expired_ticket, opened_graph_ticket, last_daily_check)
+    opened_expired_ticket, opened_graph_ticket, last_daily_check = check_api(logger, emailer, opened_expired_ticket, opened_graph_ticket, last_daily_check, ran_once)
+    ran_once = 1
 
     if not is_script_running(logger):
       if retry_count < max_retires:
