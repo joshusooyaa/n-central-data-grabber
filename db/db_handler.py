@@ -62,6 +62,13 @@ class DBHandler:
     except Error as e:
       self.logger.error(f"Error inserting data: {e}")
   
+  def update(self, table, column_name, new_value, where_column, where_value):
+    sql = f"UPDATE {table} SET {column_name} = %s WHERE {where_column} = %s"
+    try:
+      self.execute_query(sql, (new_value, where_value))
+    except Error as e:
+      self.logger.error(f"Error updating device id: {where_value} with error: {e}")
+  
   def batch_insert(self, table, columns, data_list):
     placeholders = ", ".join(['%s'] * len(columns))
     columns_str = ", ".join(columns)
@@ -98,12 +105,16 @@ class DBHandler:
 
   def format_and_insert(self, table, data, tables):
     device_id_key = self.device_filter[0][1]
+    device_name_key = self.device_filter[1][1]
 
     if table == tables['devices']:
       if not self._added_device(data[device_id_key]):
         data = self._package_device_insertion_data(data)
         self.logger.info(f"New device found! id: {data[device_id_key]}")
         self.insert(table, data)
+      elif self._device_name_changed(data[device_id_key], data[device_name_key]):
+        self.logger.info(f"Device name changed! id: {data[device_id_key]}, new name: {data[device_name_key]}")
+        self.update(table, device_name_key, data[device_name_key], device_id_key, data[device_id_key])
 
     elif table == tables['raw-data']:
       data_info_batch = []
@@ -204,3 +215,12 @@ class DBHandler:
           data['manufacturer'] = asset_data["manufacturer"]
 
     return data
+  
+  def _device_name_changed(self, device_id, new_name):
+    device_id_column = self.db_columns['devices'][0]
+    device_name_column = self.db_columns['devices'][1]
+    device = self.get(self.db_tables['devices'], device_name_column, {device_id_column: device_id})
+    if device and device != [] and device[0][device_name_column] != new_name:
+      return True
+    
+    return False
