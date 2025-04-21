@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>N-Central Data Grabber Configuration</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>N-Central Data Grabber Configuration</h1>
+            <div class="controls">
+                <a href="/flow-chart" class="btn secondary"><i class="fas fa-project-diagram"></i> View System Flow</a>
+                <button id="saveBtn" class="btn primary"><i class="fas fa-save"></i> Save Configuration</button>
+                <button id="refreshBtn" class="btn secondary"><i class="fas fa-sync"></i> Refresh</button>
+            </div>
+        </header>
+
+        <div class="config-container">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="api">API Configuration</button>
+                <button class="tab-btn" data-tab="db">Database Configuration</button>
+                <button class="tab-btn" data-tab="org">Organization Settings</button>
+                <button class="tab-btn" data-tab="logging">Logging</button>
+                <button class="tab-btn" data-tab="microsoft">Microsoft Graph</button>
+                <button class="tab-btn" data-tab="monitor">Monitor Settings</button>
+            </div>
+
+            <div class="tab-content">
+                <div id="api" class="tab-pane active">
+                    <h2>API Configuration</h2>
+                    <div class="config-table-container">
+                        <table class="config-table">
+                            <thead>
+                                <tr>
+                                    <th>Setting</th>
+                                    <th>Value</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody id="api-config">
+                                <!-- API config will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="db" class="tab-pane">
+                    <h2>Database Configuration</h2>
+                    <div class="config-table-container">
+                        <table class="config-table">
+                            <thead>
+                                <tr>
+                                    <th>Setting</th>
+                                    <th>Value</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody id="db-config">
+                                <!-- DB config will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="org" class="tab-pane">
+                    <h2>Organization Settings</h2>
+                    <div class="config-table-container">
+                        <table class="config-table">
+                            <thead>
+                                <tr>
+                                    <th>Organization</th>
+                                    <th>Abbreviation</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="org-config">
+                                <!-- Org config will be populated here -->
+                            </tbody>
+                        </table>
+                        <button id="addOrgBtn" class="btn secondary"><i class="fas fa-plus"></i> Add Organization</button>
+                    </div>
+                </div>
+
+                <div id="logging" class="tab-pane">
+                    <h2>Logging Configuration</h2>
+                    <div class="config-table-container">
+                        <table class="config-table">
+                            <thead>
+                                <tr>
+                                    <th>Setting</th>
+                                    <th>Value</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logging-config">
+                                <!-- Logging config will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="microsoft" class="tab-pane">
+                    <h2>Microsoft Graph Configuration</h2>
+                    <div class="config-table-container">
+                        <table class="config-table">
+                            <thead>
+                                <tr>
+                                    <th>Setting</th>
+                                    <th>Value</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody id="microsoft-config">
+                                <!-- Microsoft config will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="monitor" class="tab-pane">
+                    <h2>Monitor Configuration</h2>
+                    <div class="config-table-container">
+                        <table class="config-table">
+                            <thead>
+                                <tr>
+                                    <th>Setting</th>
+                                    <th>Value</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody id="monitor-config">
+                                <!-- Monitor config will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script src="/static/js/config.js"></script>
+</body>
+</html> 
