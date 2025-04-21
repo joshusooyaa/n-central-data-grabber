@@ -45,7 +45,7 @@
     },
     "db-columns": {
       "orgs": ["org_id", "org_name"],
-      "devices": ["device_id"],
+      "devices": ["device_id", "device_name"],
       "data-info": ["data_id", "field_name", "description"],
       "raw-data": ["value", "state", "scan_time", "device_id", "data_id"]
     },
