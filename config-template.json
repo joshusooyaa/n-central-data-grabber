@@ -79,5 +79,10 @@
     "max-retries": 5,
     "wait-time": 60
   },
-  "script-interval": 300
+  "script-interval": 300,
+  "web-server": {
+    "username": "admin",
+    "password": "password",
+    "session-timeout": 60
+  }
 }

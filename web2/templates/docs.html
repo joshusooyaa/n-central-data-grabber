@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>N-Central Data Grabber - Documentation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <style>
+        .flow-diagram {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+            position: relative;
+            padding: 20px;
+        }
+        .overview-section {
+            margin-bottom: 30px;
+        }
+        .overview-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .overview-section p {
+            line-height: 1.6;
+            color: #34495e;
+        }
+        .important-note {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .command-block {
+            background-color: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+
+        /* Flow Diagram Styles */
+        .diagram-container {
+            position: relative;
+            padding: 40px;
+            min-height: 500px;
+            display: grid;
+            grid-template-columns: 250px 300px 150px 200px 200px;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .service-box {
+            background-color: #f5f5dc;
+            border: 2px solid #d3d3d3;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .monitor-box {
+            background-color: #8b7355;
+            color: white;
+            border-radius: 20px;
+            padding: 8px 15px;
+            display: inline-block;
+            text-align: center;
+            width: fit-content;
+        }
+
+        .action-box {
+            background-color: white;
+            border: 1px solid #d3d3d3;
+            border-radius: 4px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .flow-box {
+            background-color: #f5f5dc;
+            border: 2px solid #d3d3d3;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .flow-title {
+            background-color: #fffacd;
+            padding: 5px;
+            margin: -15px -15px 15px -15px;
+            border-radius: 6px 6px 0 0;
+        }
+
+        .hexagon {
+            background-color: #8b7355;
+            color: white;
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+            padding: 15px 25px;
+            text-align: center;
+            width: fit-content;
+            margin: 0 auto;
+        }
+
+        .code-step {
+            background-color: #1e1e1e;
+            color: #ff69b4;
+            border-radius: 4px;
+            padding: 8px;
+            font-family: monospace;
+            text-align: center;
+        }
+
+        .database-box {
+            width: 120px;
+            height: 80px;
+            border: 2px solid #d3d3d3;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            position: relative;
+        }
+
+        .server-box {
+            width: 180px;
+            padding: 20px;
+            background-color: #f0f0f0;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .error-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .error-box {
+            background-color: #f5f5dc;
+            border: 1px solid #d3d3d3;
+            border-radius: 4px;
+            padding: 8px 15px;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .true-false-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            width: 100%;
+        }
+
+        /* Flow Diagram Tab Styles */
+        #flow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            background-color: #f8f9fa;
+            min-height: 600px;
+            border-radius: 0 0 8px 8px;
+        }
+
+        #flow .flow-diagram {
+            max-width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #flow img {
+            max-width: 90%;
+            height: auto;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            background-color: white;
+            padding: 20px;
+            transition: transform 0.2s ease-in-out;
+            display: block;
+        }
+
+        #flow img:not([src]), 
+        #flow img[src=""] {
+            display: none;
+        }
+
+        #flow img:hover {
+            transform: scale(1.35);
+        }
+
+        @media (max-width: 768px) {
+            #flow {
+                padding: 20px 10px;
+            }
+            
+            #flow img {
+                max-width: 100%;
+                padding: 10px;
+            }
+        }
+
+        /* README Tab Styles */
+        #readme {
+            padding: 30px;
+            background-color: #f8f9fa;
+            border-radius: 0 0 8px 8px;
+        }
+
+        #readme h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        #readme h2 {
+            color: #34495e;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        #readme h3 {
+            color: #2c3e50;
+            margin-top: 25px;
+        }
+
+        #readme code {
+            background-color: #f1f1f1;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #e74c3c;
+        }
+
+        #readme pre {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        #readme ul, #readme ol {
+            padding-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        #readme li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        #readme p {
+            line-height: 1.7;
+            margin-bottom: 15px;
+        }
+
+        #readme hr {
+            margin: 30px 0;
+            border-color: #bdc3c7;
+        }
+
+        .lock-icon {
+            color: #95a5a6;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">N-Central Data Grabber</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/config">Configuration</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/docs">Documentation</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>N-Central Data Grabber Documentation</h1>
+            <div>
+                <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+        
+        <ul class="nav nav-tabs" id="docTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">
+                    <i class="fas fa-book"></i> System Overview
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="flow-tab" data-bs-toggle="tab" data-bs-target="#flow" type="button" role="tab">
+                    <i class="fas fa-project-diagram"></i> Flow Diagram
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="readme-tab" data-bs-toggle="tab" data-bs-target="#readme" type="button" role="tab">
+                    <i class="fas fa-book-open"></i> README
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="docTabsContent">
+            <!-- System Overview Tab -->
+            <div class="tab-pane fade show active" id="overview" role="tabpanel">
+                <div class="overview-section">
+                    <h3>Background</h3>
+                    <p>Due to n-central being hosted in the cloud, monitored service data cannot be pulled from their database. This is due to it being a "shared" db.</p>
+                    <p>N-Central provides an API to fetch the data collected from each service, however, the API only allows fetching the most recent response from the service being fetched.</p>
+                </div>
+
+                <div class="overview-section">
+                    <h3>Solution</h3>
+                    <p>As a result, the following solution has been created:</p>
+                    <ul>
+                        <li>A script calls specific endpoints for each device being monitored and collects CPU, Memory, Disk, and Connectivity information every 5 minutes (typically the poll rate of each service here)</li>
+                        <li>The data is then saved into a MYSQL Database which the OPS Reports then fetch from weekly/monthly</li>
+                        <li>The server currently lives in Nutanix and its IP Address is 10.30.14.4 - all credentials are in last pass.</li>
+                    </ul>
+                </div>
+
+                <div class="overview-section">
+                    <h3>Monitoring Service</h3>
+                    <div class="important-note">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Important Note</h4>
+                        <p>The main script is constantly monitored (every minute) to make sure it's up and running. There is a system service called "datamonitor.service" that does this check. This should be running at all times, and starts on system boot.</p>
+                    </div>
+
+                    <h4>Service Management</h4>
+                    <p>You can check the service status using:</p>
+                    <div class="command-block">sudo service datamonitor status</div>
+                    
+                    <p>To restart the service, use either:</p>
+                    <div class="command-block">sudo service datamonitor restart</div>
+                    <p>or</p>
+                    <div class="command-block">sudo service datamonitor start</div>
+                </div>
+
+                <div class="overview-section">
+                    <h3>Error Handling</h3>
+                    <ul>
+                        <li>monitor.py (which is ran by datamonitor.service) will attempt to restart it 5 times</li>
+                        <li>If it fails 5 times in a row, it sleeps for 60 minutes (can be configured) and tries again</li>
+                        <li>A ticket in topdesk gets created if it fails after 5 attempts</li>
+                        <li>Duplicate tickets are not created, and will only be created again if it fails after coming back up</li>
+                    </ul>
+                </div>
+
+                <div class="overview-section">
+                    <h3>Expiration Monitoring</h3>
+                    <ul>
+                        <li>A ticket is created in topdesk when the API password is within 3 days of expiry
+                            <ul>
+                                <li>This expiration date is set in the configuration file</li>
+                                <li>Should be changed each time the password is updated</li>
+                            </ul>
+                        </li>
+                        <li>Another ticket is created for microsoft-graph expiration
+                            <ul>
+                                <li>Microsoft-graph is necessary for the script to send emails</li>
+                                <li>When microsoft-graph keys are about to expire, a ticket will be created</li>
+                                <li>This expiration is set in the configuration file and should be updated when the microsoft-graph keys are updated</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- README Tab -->
+            <div class="tab-pane fade" id="readme" role="tabpanel">
+                <h1>n-central-data-grabber</h1>
+                <p>This application is used to extract the raw-monitored data from n-central. It is customizeable to exclude/include as many data points as the user wants.</p>
+
+                <h2>Setup</h2>
+                <h3>Linux</h3>
+                <ol>
+                    <li>Ensure that both >=Python 3.8 and >=mysql 8.0 are installed</li>
+                    <li>Ensure that both pip and venv are installed
+                        <pre>sudo apt install python3-pip
+sudo apt install python(version)-venv</pre>
+                    </li>
+                    <li>Clone the repository into /opt/ (or wherever works best)</li>
+                    <li>Navigate to the directory and run the following:
+                        <pre>chmod +x scripts/setup.sh
+sudo scripts/setup.sh
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt</pre>
+                    </li>
+                    <li>Configure <code>config.json</code></li>
+                    <li>After configuration, to start the script run <code>python3 main.py</code>
+                        <ul>
+                            <li>Ensure this is run in the venv, otherwise the script may not be able to access necessary modules</li>
+                            <li>To exit the venv, run <code>deactivate</code></li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <h3>Remote DB Access</h3>
+                <p>If you want to access the DB from a different device on your network, follow these steps.</p>
+                <ol>
+                    <li>Log into mysql as root user</li>
+                    <li>Run the following commands:
+                        <pre>CREATE USER 'remote_user'@'%' IDENTIFIED BY '(password_here)'
+GRANT ALL PRIVILEGES ON n_central_monitor_data.* TO 'remote_user'@'%';
+FLUSH PRIVILEGES;</pre>
+                        <p>Replace '%' with an IP if you want to limit access to a specific IP</p>
+                    </li>
+                    <li>Ensure that bind-address is set to 0.0.0.0 (or a specific IP)
+                        <pre>sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf</pre>
+                        <p>Change <code>bind-address: 127.0.0.2</code> to <code>0.0.0.0</code> or a specific IP address</p>
+                    </li>
+                    <li>Restart mysql and check to see if the connection works.</li>
+                </ol>
+
+                <h2>Configuration</h2>
+                <p>Take <code>config-template.json</code> and rename it to <code>config.json</code>. Below is the config documentation. Entries marked with <i class="fas fa-lock lock-icon"></i> indicate you should not change them unless information relating to the API is changed.</p>
+
+                <h3>API</h3>
+                <ul>
+                    <li><strong>api-jwt</strong>: N-central User-API Token (JWT) (http, Bearer) - see N-Central's API for more details.</li>
+                    <li><strong>api-token-refresh-offset</strong>: How early to refresh the API-Access Token before it expires. Consider updating this in accordance with <code>script-interval</code> and how long it takes the script to run. The logs gives detailed information on run-time after each run. Default: 10 minutes.</li>
+                </ul>
+
+                <h4>api-endpoints</h4>
+                <ul>
+                    <li><strong>base-url</strong>: The URL of your n-central ncod server.</li>
+                </ul>
+
+                <h5>auth</h5>
+                <ul>
+                    <li><i class="fas fa-lock lock-icon"></i><strong>authenticate-endpoint</strong>: Used to authenticate the api-jwt token.</li>
+                    <li><i class="fas fa-lock lock-icon"></i><strong>refresh-endpoint</strong>: Used to refresh the api-access token.</li>
+                </ul>
+
+                <h5>devices</h5>
+                <ul>
+                    <li><i class="fas fa-lock lock-icon"></i><strong>endpoint</strong>: Endpoint for retrieving the list of devices from N-central.</li>
+                    <li><i class="fas fa-lock lock-icon"></i><strong>device-services</strong>: Endpoint attached onto endpoint with a device id to retrieve the status of service monitoring tasks.</li>
+                    <li><strong>params</strong>: Refine the query to endpoint. Review a list of params for devices at https://base-url/api-explorer</li>
+                    <li><strong>device-filter</strong>: How device information is stored in the dictionary that saves the data returned from get request to endpoint.</li>
+                    <li><i class="fas fa-lock lock-icon"></i><strong>time-format</strong>: Used to match the time format the api returns in device tasks for last scan time.</li>
+                </ul>
+
+                <h5>tasks</h5>
+                <ul>
+                    <li><i class="fas fa-lock lock-icon"></i><strong>endpoint</strong>: Endpoint for retrieving the list of tasks (services) the device is set to run.</li>
+                    <li><i class="fas fa-lock lock-icon"></i><strong>task-filter</strong>: Used to retrieve important task information from the response returned from the get request to endpoint.</li>
+                    <li><strong>data-filter</strong>: This is what is used to extract values from the response returned from endpoint called with a task id.
+                        <ul>
+                            <li><i class="fas fa-lock lock-icon"></i><strong>data-row-name</strong>: The key in the api response to retrieve the raw data name.</li>
+                            <li><i class="fas fa-lock lock-icon"></i><strong>info</strong>: A list of lists. Index 0 contains the api response key, and index 1 contains the user defined key for storage.</li>
+                            <li><strong>module-names</strong>: A list containing the services you want to fetch using an exact match.</li>
+                            <li><strong>unwanted-sub-modules</strong>: A list containing the raw data points you do not want to fetch from a service.</li>
+                            <li><strong>wanted-sub-modules</strong>: A list containing the specific raw data points you want to extract from a service.</li>
+                            <li><strong>generic-modules</strong>: A list containing the services you want to fetch using a substring match.</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h3>DB</h3>
+                <h4>db-tables</h4>
+                <ul>
+                    <li><strong>orgs</strong>: Table name in your db for orgs</li>
+                    <li><strong>devices</strong>: Table name in your db for devices</li>
+                    <li><strong>data-info</strong>: Table name in your db for data-info</li>
+                    <li><strong>raw-data</strong>: Table name in your db for raw-data</li>
+                </ul>
+
+                <h4>db-columns</h4>
+                <ul>
+                    <li><strong>orgs</strong>: A list containing the column names for id and name.</li>
+                    <li><strong>data-info</strong>: A list containing the column names for id, name, and description.</li>
+                    <li><strong>raw-data</strong>: A list containing the column names for value, state, scan time, id (foreign key to devices), and id (foreign key to data-info)</li>
+                </ul>
+
+                <h4>host</h4>
+                <ul>
+                    <li><strong>ip</strong>: DB Host to connect to.</li>
+                    <li><strong>user</strong>: Username used to access DB.</li>
+                    <li><strong>password</strong>: Password to access DB.</li>
+                    <li><strong>database</strong>: Database name.</li>
+                </ul>
+
+                <h3>Logging</h3>
+                <ul>
+                    <li><strong>max-log-size</strong>: The size (in mb) the log files should reach before rotating.</li>
+                    <li><strong>backup-count</strong>: The number of log files that have been rotated out to retain until deleting them.</li>
+                </ul>
+
+                <h3>Additional Configuration</h3>
+                <ul>
+                    <li><strong>org-abbreviations</strong> (Optional): A dict containing org names you would like abbreviated for DB insertion into the org_name column.</li>
+                    <li><strong>script-interval</strong>: How often you want to fetch the data. Default: 300 seconds.</li>
+                </ul>
+            </div>
+
+            <!-- Flow Diagram Tab -->
+            <div class="tab-pane fade" id="flow" role="tabpanel">
+              <div class="flow-diagram">
+                  <img 
+                      src="{{ url_for('static', filename='imgs/diagram.png') }}" 
+                      alt="Flow Diagram" 
+                      class="img-fluid"
+                      onerror="this.style.display='none'"
+                  >
+              </div>
+          </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

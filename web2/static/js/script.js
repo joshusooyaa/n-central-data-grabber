@@ -71,8 +71,12 @@ document.addEventListener('DOMContentLoaded', function() {
 // Load configuration from config.json
 async function loadConfig() {
     try {
-        const response = await fetch('/config');
+        const response = await fetch('/api/config');
         if (!response.ok) {
+            if (response.status === 401) {
+                window.location.href = '/login';
+                return;
+            }
             throw new Error('Failed to load configuration');
         }
         const serverConfig = await response.json();
@@ -183,62 +187,62 @@ function setupSecretFields() {
 
 // Save configuration to localStorage and server
 async function saveConfig() {
-    // Collect form data
-    config.API.expires = document.getElementById('api_expires').value;
-    // Only update JWT if it's been changed (not placeholder and not empty)
-    const apiJwt = document.getElementById('api_jwt').value;
-    if (apiJwt !== '********' && apiJwt !== '') {
-        config.API["api-jwt"] = apiJwt;
-    }
-    config.API["api-token-refresh-offset"] = parseInt(document.getElementById('api_token_refresh_offset').value);
-    config.API["api-endpoints"]["base-url"] = document.getElementById('base_url').value;
-    config.API["api-endpoints"].auth["authenticate-endpoint"] = document.getElementById('auth_authenticate').value;
-    config.API["api-endpoints"].auth["refresh-endpoint"] = document.getElementById('auth_refresh').value;
-
-    // Device settings
-    config.API["api-endpoints"].devices.endpoint = document.getElementById('device_endpoint').value;
-    config.API["api-endpoints"].devices["device-services"] = document.getElementById('device_services').value;
-    config.API["api-endpoints"].devices.params.pageSize = document.getElementById('page_size').value;
-
-    // Task settings
-    config.API["api-endpoints"].tasks.endpoint = document.getElementById('task_endpoint').value;
-
-    // Database settings
-    config.DB.host.ip = document.getElementById('db_host').value;
-    config.DB.host.user = document.getElementById('db_user').value;
-    // Only update password if it's been changed (not placeholder and not empty)
-    const dbPassword = document.getElementById('db_password').value;
-    if (dbPassword !== '********' && dbPassword !== '') {
-        config.DB.host.password = dbPassword;
-    }
-    config.DB.host.database = document.getElementById('db_database').value;
-
-    // Logging settings
-    config.logging["max-log-size"] = parseInt(document.getElementById('max_log_size').value);
-    config.logging["backup-count"] = parseInt(document.getElementById('backup_count').value);
-
-    // Microsoft Graph settings
-    config["microsoft-graph"]["client-id"] = document.getElementById('client_id').value;
-    // Only update client secret if it's been changed (not placeholder and not empty)
-    const clientSecret = document.getElementById('client_secret').value;
-    if (clientSecret !== '********' && clientSecret !== '') {
-        config["microsoft-graph"]["client-secret"] = clientSecret;
-    }
-    config["microsoft-graph"]["tenant-id"] = document.getElementById('tenant_id').value;
-    config["microsoft-graph"].expires = document.getElementById('graph_expires').value;
-    config["microsoft-graph"]["email-details"].sender = document.getElementById('email_sender').value;
-    config["microsoft-graph"]["email-details"].subject = document.getElementById('email_subject').value;
-    config["microsoft-graph"]["email-details"].body = document.getElementById('email_body').value;
-    config["microsoft-graph"]["email-details"].recipient = document.getElementById('email_recipient').value;
-
-    // Monitor settings
-    config.monitor["max-retries"] = parseInt(document.getElementById('max_retries').value);
-    config.monitor["wait-time"] = parseInt(document.getElementById('wait_time').value);
-    config["script-interval"] = parseInt(document.getElementById('script_interval').value);
-
     try {
+        // Collect form data
+        config.API.expires = document.getElementById('api_expires').value;
+        // Only update JWT if it's been changed (not placeholder and not empty)
+        const apiJwt = document.getElementById('api_jwt').value;
+        if (apiJwt !== '********' && apiJwt !== '') {
+            config.API["api-jwt"] = apiJwt;
+        }
+        config.API["api-token-refresh-offset"] = parseInt(document.getElementById('api_token_refresh_offset').value);
+        config.API["api-endpoints"]["base-url"] = document.getElementById('base_url').value;
+        config.API["api-endpoints"].auth["authenticate-endpoint"] = document.getElementById('auth_authenticate').value;
+        config.API["api-endpoints"].auth["refresh-endpoint"] = document.getElementById('auth_refresh').value;
+
+        // Device settings
+        config.API["api-endpoints"].devices.endpoint = document.getElementById('device_endpoint').value;
+        config.API["api-endpoints"].devices["device-services"] = document.getElementById('device_services').value;
+        config.API["api-endpoints"].devices.params.pageSize = document.getElementById('page_size').value;
+
+        // Task settings
+        config.API["api-endpoints"].tasks.endpoint = document.getElementById('task_endpoint').value;
+
+        // Database settings
+        config.DB.host.ip = document.getElementById('db_host').value;
+        config.DB.host.user = document.getElementById('db_user').value;
+        // Only update password if it's been changed (not placeholder and not empty)
+        const dbPassword = document.getElementById('db_password').value;
+        if (dbPassword !== '********' && dbPassword !== '') {
+            config.DB.host.password = dbPassword;
+        }
+        config.DB.host.database = document.getElementById('db_database').value;
+
+        // Logging settings
+        config.logging["max-log-size"] = parseInt(document.getElementById('max_log_size').value);
+        config.logging["backup-count"] = parseInt(document.getElementById('backup_count').value);
+
+        // Microsoft Graph settings
+        config["microsoft-graph"]["client-id"] = document.getElementById('client_id').value;
+        // Only update client secret if it's been changed (not placeholder and not empty)
+        const clientSecret = document.getElementById('client_secret').value;
+        if (clientSecret !== '********' && clientSecret !== '') {
+            config["microsoft-graph"]["client-secret"] = clientSecret;
+        }
+        config["microsoft-graph"]["tenant-id"] = document.getElementById('tenant_id').value;
+        config["microsoft-graph"].expires = document.getElementById('graph_expires').value;
+        config["microsoft-graph"]["email-details"].sender = document.getElementById('email_sender').value;
+        config["microsoft-graph"]["email-details"].subject = document.getElementById('email_subject').value;
+        config["microsoft-graph"]["email-details"].body = document.getElementById('email_body').value;
+        config["microsoft-graph"]["email-details"].recipient = document.getElementById('email_recipient').value;
+
+        // Monitor settings
+        config.monitor["max-retries"] = parseInt(document.getElementById('max_retries').value);
+        config.monitor["wait-time"] = parseInt(document.getElementById('wait_time').value);
+        config["script-interval"] = parseInt(document.getElementById('script_interval').value);
+
         // Save to server
-        const response = await fetch('/config', {
+        const response = await fetch('/api/config', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -247,6 +251,10 @@ async function saveConfig() {
         });
 
         if (!response.ok) {
+            if (response.status === 401) {
+                window.location.href = '/login';
+                return;
+            }
             throw new Error('Failed to save configuration to server');
         }
 
@@ -465,5 +473,49 @@ function setupEventListeners() {
                 saveConfig();
             }
         });
+    });
+}
+
+function resetConfig() {
+    // Show the confirmation modal
+    const resetModal = new bootstrap.Modal(document.getElementById('resetConfirmModal'));
+    resetModal.show();
+}
+
+function confirmReset() {
+    // Hide the modal
+    const resetModal = bootstrap.Modal.getInstance(document.getElementById('resetConfirmModal'));
+    resetModal.hide();
+
+    // Show loading state
+    const resetBtn = document.querySelector('button[onclick="resetConfig()"]');
+    const originalContent = resetBtn.innerHTML;
+    resetBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resetting...';
+    resetBtn.disabled = true;
+
+    // Call the reset endpoint
+    fetch('/reset_config', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('Configuration reset to defaults successfully!', 'success');
+            // Reload the configuration
+            loadConfig();
+        } else {
+            showAlert('Failed to reset configuration: ' + data.error, 'danger');
+        }
+    })
+    .catch(error => {
+        showAlert('Error resetting configuration: ' + error, 'danger');
+    })
+    .finally(() => {
+        // Restore button state
+        resetBtn.innerHTML = originalContent;
+        resetBtn.disabled = false;
     });
 } 
