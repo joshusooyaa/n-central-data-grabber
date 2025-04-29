@@ -8,29 +8,19 @@ This application is used to extract the raw-monitored data from n-central. It is
     - `sudo apt install python3-pip`
     - `sudo apt install python(version)-venv`
 4. Clone the repository into /opt/ (or wherever works best)
-5. Navigate to the directory and run the following:
-    - `chmod +x scripts/setup.sh`
+5. Ensure mysql is running
+6. Navigate to the directory and run the following:
+    - `chmod +x scripts/setup.sh` - This will create the database
     - `sudo scripts/setup.sh`
     - `python3 -m venv venv`
     - `source venv/bin/activate`
     - `pip install -r requirements.txt`
-6. Configure `config.json`
-7. After configuration, to start the script run `python3 main.py`
+7. Configure `config.json`
+8. After configuration, to start the script run `python3 main.py`
     - Ensure this is run in the venv, otherwise the script may not be able to access necessary modules
     - To exit the venv, run `deactivate`
     - Use `monitor.py` instead of `main.py` if you want to ensure continual function of the script. Due to some bugs, `main.py` can fail and stop running, which `monitor.py` will then attempt to restart it. See below for full automation.
-8. The web interface can be started by running python3 app.py in the `web2` dir. It's configured to use the server's/machine's IP address so that it can be accessed externally.
-
-## DB Setup
-1. Ensure your server is running mysql
-2. Create the database and tables using the provided SQL file:
-   ```bash
-   mysql -u root -p < db/db.sql
-   ```
-   This will:
-   - Create the database `n_central_monitor_data`
-   - Create all necessary tables (orgs, devices, data_info, raw_data)
-   - Set up the appropriate indexes and foreign key constraints
+9. The web interface can be started by running python3 app.py in the `web2` dir. It's configured to use the server's/machine's IP address so that it can be accessed externally.
 
 ### Remote DB Access
 If you want to access the DB from a different device on your network, follow these steps.
