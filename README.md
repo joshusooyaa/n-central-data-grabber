@@ -193,3 +193,7 @@ Take `config-template.json` and rename it to `config.json`. Below is the config 
 - **`username`**: Username for accessing the web interface. Default: "admin".
 - **`password`**: Password for accessing the web interface. Default: "password".
 - **`session-timeout`**: Session timeout in minutes. Default: 60.
+
+# Notes
+* Due to lack of time, the web interface `web2` was developed mainly through cursor. Had I had more time, I would have liked to done this myself.
+* Please feel free to update or make changes and I'll review them when I have time. This is far from being done, and can be made much more configurable than it currently is.
