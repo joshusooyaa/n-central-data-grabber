@@ -12,8 +12,10 @@ app.secret_key = os.urandom(24)  # Generate a random secret key for sessions
 app.permanent_session_lifetime = timedelta(hours=8)  # Default session lifetime
 
 # Path to config file
-CONFIG_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config.json')
-CONFIG_TEMPLATE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config-template.json')
+# CONFIG_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config.json')
+# CONFIG_TEMPLATE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config-template.json')
+CONFIG_PATH = '/opt/n-central-data-grabber/config.json'
+CONFIG_TEMPLATE_PATH = '/opt/n-central-data-grabber/config-template.json'
 
 def load_config():
     with open(CONFIG_PATH, 'r') as f:
