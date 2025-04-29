@@ -18,6 +18,19 @@ This application is used to extract the raw-monitored data from n-central. It is
 7. After configuration, to start the script run `python3 main.py`
     - Ensure this is run in the venv, otherwise the script may not be able to access necessary modules
     - To exit the venv, run `deactivate`
+    - Use `monitor.py` instead of `main.py` if you want to ensure continual function of the script. Due to some bugs, `main.py` can fail and stop running, which `monitor.py` will then attempt to restart it. See below for full automation.
+8. The web interface can be started by running python3 app.py in the `web2` dir. It's configured to use the server's/machine's IP address so that it can be accessed externally.
+
+## DB Setup
+1. Ensure your server is running mysql
+2. Create the database and tables using the provided SQL file:
+   ```bash
+   mysql -u root -p < db/db.sql
+   ```
+   This will:
+   - Create the database `n_central_monitor_data`
+   - Create all necessary tables (orgs, devices, data_info, raw_data)
+   - Set up the appropriate indexes and foreign key constraints
 
 ### Remote DB Access
 If you want to access the DB from a different device on your network, follow these steps.
@@ -32,6 +45,52 @@ If you want to access the DB from a different device on your network, follow the
     - Change `bind-address: 127.0.0.2` to `0.0.0.0` or a specific IP address
 4. Restart mysql and check to see if the connection works. 
 
+## Automation setup (Linux)
+### datamonitor.service
+1. Run `sudo nano /etc/systemd/system/datamonitor.service`
+2. Enter the following information:
+```
+[Unit]
+Description=N-Central Collection Monitor Service
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/n-central-data-grabber
+ExecStart=/opt/n-central-data-grabber/venv/bin/python /opt/n-central-data-grabber/monitor.py
+Restart=always
+User=ubuntu
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
+```
+3. Note that you may need to change the path information if you've placed the repository in a different location
+4. Run `sudo systemctl daemon-reload`
+5. Run `sudo service datamonitor.service start`
+6. Check status with `sudo service datamonitor.service status`
+
+### ncentral_web.service
+1. Run `sudo nano /etc/systemd/system/ncentral_web.service`
+2. Enter the following information:
+```
+[Unit]
+Description=Web Interface for N-Central Data Collector
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/n-central-data-grabber/web2
+ExecStart=/opt/n-central-data-grabber/venv/bin/python /opt/n-central-data-grabber/web2/app.py
+Restart=always
+User=root
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
+```
+3. Note that you may need to change the path information if you've placed the repository in a different location
+4. Run `sudo systemctl daemon-reload`
+5. Run `sudo service ncentral_web.service start`
+6. Check status with `sudo service ncentral_web.service status`
 
 # Configuration
 Take `config-template.json` and rename it to `config.json`. Below is the config documentation. Entries marked with 🔒 indicate you should not change them unless information relating to the API is changed.
@@ -40,6 +99,7 @@ Take `config-template.json` and rename it to `config.json`. Below is the config 
 
 - **`api-jwt`**:  *N-central User-API Token (JWT) (http, Bearer)* - see N-Central's API for more details.
 - **`api-token-refresh-offset`**:  How early to refresh the `API-Access Token` before it expires. Consider updating this in accordance with `script-interval` and how long it takes the script to run. The logs gives detailed information on run-time after each run. Default: 10 minutes.
+- **`expires`**: Expiration date for the API access token. This must be manually changed each time the API password is changed.
 
 ### `api-endpoints`
 
@@ -53,6 +113,7 @@ Take `config-template.json` and rename it to `config.json`. Below is the config 
 - **🔒`endpoint`**:  Endpoint for retrieving the list of devices from N-central.
 - **🔒`device-services`**:  Endpoint attached onto `endpoint` with a device id to retrieve the status of service monitoring tasks. 
 - **`params`**:  Refine the query to `endpoint`. Review a list of params for `devices` at https://`base-url`/api-explorer
+- **`pageSize`**: Number of devices to retrieve per page. Set to -1 to retrieve all devices at once.
 - **`device-filter`**:  How device information is stored in the dictionary that saves the data returned from get request to `endpoint`. In `info`, index 0 of the lists corresponds to a key in the response data. In the case that these names ever change, they can be re-named here. Index 1 of the lists in `info` should not, and do not need to be changed.
 - - **Note** info[0][1] should be changed in accordance with the column name for the device table's primary key.
 - **🔒`time-format`**:  Used to match the time format the api returns in device tasks for last scan time.  
@@ -82,6 +143,7 @@ Take `config-template.json` and rename it to `config.json`. Below is the config 
 ### `db-columns`
 
 - **`orgs`**:  A list containing the column names for id and name.
+- **`devices`**:  A list containing the column names for device_id and device_name.
 - **`data-info`**:  A list containing the column names for id, name, and description.
 - **`raw-data`**:  A list containing the column names for value, state, scan time, id (foreign key to devices), and id (foreign key to data-info)
 
@@ -106,6 +168,28 @@ Take `config-template.json` and rename it to `config.json`. Below is the config 
 ### `script-interval`: 
 - How often you want to fetch the data. This is a set interval, and if the script finishes after the interval threshold is met, it will immediately start again. If this is the case though, consider increasing the interval or reducing the amount of raw data being retrieved through `module-names`. Default: 300 seconds.
 
-  
+---
 
+## `microsoft-graph`
+- **`client-id`**: Microsoft Graph API client ID for authentication.
+- **`client-secret`**: Microsoft Graph API client secret for authentication.
+- **`tenant-id`**: Microsoft Graph API tenant ID for authentication.
+- **`expires`**: Expiration date for Microsoft Graph API credentials. This must be manually updated each time the credentials are updated.
+- **`email-details`**: Configuration for email notifications.
+  - **`sender`**: Email address that will send notifications.
+  - **`subject`**: Subject line for notification emails.
+  - **`body`**: Body content for notification emails.
+  - **`recipient`**: Email address that will receive notifications.
 
+---
+
+## `monitor`
+- **`max-retries`**: Maximum number of retry attempts for failed script reload. Default: 5.
+- **`wait-time`**: Time to wait (in seconds) between retry attempts. Default: 60.
+
+---
+
+## `web-server`
+- **`username`**: Username for accessing the web interface. Default: "admin".
+- **`password`**: Password for accessing the web interface. Default: "password".
+- **`session-timeout`**: Session timeout in minutes. Default: 60.
